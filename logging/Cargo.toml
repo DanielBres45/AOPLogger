@@ -1,0 +1,11 @@
+[package]
+name = "logging"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = { version = "0.4.22", features = ["std", "serde", "kv"] }
+log_statement = {path = "../log_statement"}
+time_attribute = {path = "../time_attribute"}
+chrono = "0.4.38"
+regex = "1.7"
