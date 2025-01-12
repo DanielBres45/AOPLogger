@@ -9,3 +9,8 @@ log_statement = {path = "../log_statement"}
 time_attribute = {path = "../time_attribute"}
 chrono = "0.4.38"
 regex = "1.7"
+
+[features]
+Trace = []
+Debug = []
+Timee = []
