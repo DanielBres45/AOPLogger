@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "logging",
+    "log_statement",
+    "time_attribute"
+]
+
