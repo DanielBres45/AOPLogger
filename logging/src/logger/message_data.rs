@@ -2,28 +2,28 @@ use log::Record;
 
 use super::{key_collector::KeyCollector, method_signature::LogHeader};
 
-
-pub struct MessageHeader{
-    pub method_signature: LogHeader
+pub struct MessageHeader {
+    pub method_signature: LogHeader,
+    pub flush: bool,
 }
 
-impl Default for MessageHeader{
-    fn default() -> Self{
-        MessageHeader{
-            method_signature: LogHeader::default()
+impl Default for MessageHeader {
+    fn default() -> Self {
+        MessageHeader {
+            method_signature: LogHeader::default(),
+            flush: false,
         }
     }
 }
 
-pub struct MessageData<'a>{
+pub struct MessageData<'a> {
     pub header: MessageHeader,
     pub target: &'a str,
-    pub message: String
+    pub message: String,
 }
 
-impl<'a> MessageData<'a>{
-    pub fn parse(record: &'a Record) -> Self{
-
+impl<'a> MessageData<'a> {
+    pub fn parse(record: &'a Record) -> Self {
         let mut visitor = KeyCollector::new();
 
         let _ = record.key_values().visit(&mut visitor);
@@ -33,10 +33,11 @@ impl<'a> MessageData<'a>{
 
         let target = record.target();
 
-        MessageData{
+        MessageData {
             header,
             target,
-            message
+            message,
         }
     }
 }
+

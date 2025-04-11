@@ -13,6 +13,12 @@ pub struct LoggingManager {
     level: Level,
 }
 
+impl Drop for LoggingManager {
+    fn drop(&mut self) {
+        self.flush();
+    }
+}
+
 impl LoggingManager {
     pub fn init(file_path: &str) -> Result<(), SetLoggerError> {
         let writer = match ThreadSafeBufferedLogger::new(file_path) {
@@ -68,6 +74,10 @@ impl LoggingManager {
         let _ = &self.writer.flush();
     }
 
+    pub fn flush(&self) {
+        let _ = &self.writer.flush();
+    }
+
     fn message_log(&self, data: MessageData) {
         let message = format!(
             "[{:?}] Target: {} - {}, Message: {:?}\n",
@@ -77,7 +87,27 @@ impl LoggingManager {
             data.message
         );
 
-        let _ = &self.writer.write_string(&message);
+        let res = self.writer.write_string(&message);
+        Self::handle_result(res);
+
+        if data.header.flush {
+            self.flush();
+        }
+    }
+
+    pub fn handle_result(res: Result<usize, std::io::Error>) {
+        match res {
+            Ok(count) => {
+                if count == 0 {
+                    panic!("Could not write to file!");
+                }
+
+                println!("Wrote {} bytes", count);
+            }
+            Err(err_msg) => {
+                panic!("Could not write message to file: {}", err_msg)
+            }
+        }
     }
 }
 
