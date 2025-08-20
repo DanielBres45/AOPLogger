@@ -1,6 +1,7 @@
+
 use proc_macro::TokenStream;
+use syn::{Ident, parse_macro_input};
 use quote::quote;
-use syn::{parse_macro_input, Ident};
 
 #[proc_macro]
 pub fn def_trace(input: TokenStream) -> TokenStream {
@@ -8,7 +9,7 @@ pub fn def_trace(input: TokenStream) -> TokenStream {
     let name = input.to_string();
     let macro_name = format!("{}_trace", name.to_lowercase());
     let macro_ident = Ident::new(&macro_name, input.span());
-
+    
     let expanded = quote! {
         #[macro_export]
         macro_rules! #macro_ident {
@@ -31,7 +32,7 @@ pub fn def_log(input: TokenStream) -> TokenStream {
     let name = input.to_string();
     let macro_name = format!("{}_log", name.to_lowercase());
     let macro_ident = Ident::new(&macro_name, input.span());
-
+    
     let expanded = quote! {
         #[macro_export]
         macro_rules! #macro_ident {
@@ -46,4 +47,3 @@ pub fn def_log(input: TokenStream) -> TokenStream {
 
     TokenStream::from(expanded)
 }
-

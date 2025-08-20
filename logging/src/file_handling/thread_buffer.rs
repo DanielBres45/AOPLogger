@@ -1,17 +1,10 @@
-use std::{
-    fs::{File, OpenOptions},
-    io::{self, BufWriter, Write},
-    sync::{Arc, Mutex},
-};
+use std::{fs::OpenOptions, io::{self, BufWriter, Write}, sync::{Arc, Mutex}};
+
+
+
 
 pub struct ThreadSafeBufferedLogger {
-    writer: Arc<Mutex<BufWriter<File>>>,
-}
-
-impl Drop for ThreadSafeBufferedLogger {
-    fn drop(&mut self) {
-        drop(self.writer.lock().unwrap())
-    }
+    writer: Arc<Mutex<BufWriter<std::fs::File>>>,
 }
 
 impl ThreadSafeBufferedLogger {
@@ -27,23 +20,18 @@ impl ThreadSafeBufferedLogger {
         })
     }
 
-    pub fn write_string(&self, data: &str) -> io::Result<usize> {
+    pub fn write_string(&self, data: &str){ 
         let mut writer = self.writer.lock().unwrap();
-
-        let mut tot: usize = 0;
-        for line in data.split('\n') {
-            match writer.write(format!("{}", line).as_bytes()) {
-                Ok(v) => tot += v,
-                Err(e) => return Err(e),
-            }
+        for line in data.split('\n')
+        {
+            _ = writeln!(writer, "{}", line)
         }
-
-        return Ok(tot);
     }
 
     pub fn write(&self, data: &[u8]) -> io::Result<()> {
         let mut writer = self.writer.lock().unwrap();
         writer.write_all(data)
+        
     }
 
     pub fn flush(&self) -> io::Result<()> {
