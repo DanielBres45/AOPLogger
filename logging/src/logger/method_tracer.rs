@@ -1,27 +1,29 @@
 use std::time::Instant;
 
-use log::trace;
+use log::Level;
+use log::{log, trace};
 
-use super::method_signature::LogHeader;
-
-pub struct MethodTracer{
-    signature: LogHeader,
-    start: Instant
+pub struct MethodTracer {
+    file_name: String,
+    line_number: u32,
+    start: Instant,
 }
 
-impl MethodTracer{
-    pub fn new(name: &str, line: u32) -> Self{
-        let signature = LogHeader::build(name, line);
-
-        MethodTracer{
-            signature,
-            start: Instant::now()
+impl MethodTracer {
+    pub fn new(file_name: String, line_number: u32) -> Self {
+        MethodTracer {
+            file_name,
+            line_number,
+            start: Instant::now(),
         }
     }
 
     pub fn dispose(&self) {
-        let duration = &self.start.elapsed(); 
-        trace!(target = "MethodTracer", file_name = &self.signature.file_name.as_str(), line_number = &self.signature.line_number; "{:?}", duration); 
+
+        log!(
+            target: "MethodTracer",
+            Level::Trace,
+            "{:?}", self.start.elapsed()
+        );
     }
 }
-

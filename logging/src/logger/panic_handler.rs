@@ -3,8 +3,6 @@ use std::{backtrace::Backtrace, panic::PanicHookInfo, thread::sleep, time::Durat
 
 use log::error;
 
-use crate::file_handling::string_builder::StringBuilder;
-
 pub struct PanicHandler;
 
 impl PanicHandler {
@@ -35,16 +33,13 @@ impl PanicHandler {
     pub fn handle_panic(panic_info: &PanicHookInfo<'_>) {
         let backtrace: Backtrace = Backtrace::capture();
 
-        let message: String = StringBuilder::new()
-            .add_line("panic occured  ")
-            .add_line(&Self::format_location(panic_info))
-            .add_line(&Self::split_backtrace(backtrace.to_string()))
-            .add(&Self::format_panic_info(panic_info))
-            .into();
+        let mut message: String = "panic occured  \n".to_string();
+        message.push_str(&Self::format_location(panic_info));
+        message.push_str(&Self::split_backtrace(backtrace.to_string()));
+        message.push_str(&Self::format_panic_info(panic_info));
 
         error!("{}", message);
         sleep(Duration::from_millis(5));
         println!("{}", message);
     }
 }
-

@@ -1,7 +1,5 @@
-pub mod key_collector;
+pub mod log_message_parser;
 pub mod logger;
-pub mod message_data;
-pub mod method_signature;
 pub mod method_tracer;
 mod panic_handler;
-
+mod thread_buffer;
