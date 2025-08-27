@@ -35,12 +35,18 @@ pub fn def_log(input: TokenStream) -> TokenStream {
         
         #[macro_export]
         macro_rules! #debug_macro_ident {
-        ($fmt:literal, $closure:expr) => {
+        ($fmt:literal, || $closure:expr) => { //|| to match closures without arguments...
             if #const_var {
-                log::debug!(target: #name_str, $fmt, ($closure)());
+                log::debug!(target: #name_str, $fmt, $closure);
             }
         };
         
+        ($fmt:literal, |$($param:ident),*| $closure:expr) => {
+            if CAMERA_DEBUG {
+                log::debug!(target: "camera", $fmt, $($param),* $closure);
+            }
+        };
+
         ($($arg:tt)*) => {
             if #const_var {
                 log::debug!(target: #name_str, $($arg)*);
